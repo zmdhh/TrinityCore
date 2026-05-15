@@ -8,7 +8,7 @@ jobs:
         with:
           ref: 3.3.5
           submodules: true
-      - name: Install Boost 1.83
+      - name: Install Boost
         uses: MarkusJx/install-boost@v2
         id: install-boost
         with:
@@ -19,10 +19,11 @@ jobs:
       - name: Configure
         env:
           BOOST_ROOT: ${{ steps.install-boost.outputs.BOOST_ROOT }}
-        run: cmake -GNinja -S . -B build -DTOOLS=ON -DWITHOUT_METRICS=1
+        run: cmake -GNinja -S . -B build -DTOOLS=ON -DWITHOUT_METRICS=1 -DBoost_COMPILER=-vc143 -DBoost_ARCHITECTURE=-x64
       - name: Build Tools
         run: cmake --build build --config Release --target mapextractor --target mmaps_generator --target vmap4extractor --target vmap4assembler
       - uses: actions/upload-artifact@v4
         with:
           name: tools-335
           path: build/**/*.exe
+          if-no-files-found: error
