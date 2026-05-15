@@ -16,10 +16,16 @@ jobs:
           link: static
           platform_version: 2022
           toolset: msvc
+      - name: Install OpenSSL
+        run: |
+          $exe = "$env:TEMP\OpenSSL.exe"
+          (New-Object Net.WebClient).DownloadFile('https://slproweb.com/download/Win64OpenSSL-3_4_1.exe', $exe)
+          Start-Process $exe -Wait -ArgumentList '/SILENT','/SP-','/SUPPRESSMSGBOXES',"/DIR=C:\OpenSSL-Win64"
+          echo "OPENSSL_ROOT_DIR=C:\OpenSSL-Win64" >> $env:GITHUB_ENV
       - name: Configure
         env:
           BOOST_ROOT: ${{ steps.install-boost.outputs.BOOST_ROOT }}
-        run: cmake -GNinja -S . -B build -DTOOLS=ON -DWITHOUT_METRICS=1 -DBoost_COMPILER=-vc143 -DBoost_ARCHITECTURE=-x64
+        run: cmake -GNinja -S . -B build -DTOOLS=ON -DWITHOUT_METRICS=1 -DBoost_COMPILER=-vc143 -DBoost_ARCHITECTURE=-x64 -DOPENSSL_ROOT_DIR=C:\OpenSSL-Win64
       - name: Build Tools
         run: cmake --build build --config Release --target mapextractor --target mmaps_generator --target vmap4extractor --target vmap4assembler
       - uses: actions/upload-artifact@v4
