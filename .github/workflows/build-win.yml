@@ -7,17 +7,16 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: 3.3.5
-      - name: Install Boost
+      - name: Download Boost
         shell: cmd
         run: |
-          nuget install boost -Version 1.83.0 -ExcludeVersion -OutputDirectory C:\local
+          curl -L -o C:\boost.7z https://github.com/TrinityCore/TrinityCore/releases/download/TDB1200.26021/boost_1_91_0-msvc-14.3-64.exe
+          C:\boost.7z /SILENT /SUPPRESSMSGBOXES /DIR="C:\Boost"
       - name: Configure
-        run: cmake -S . -B build -DTOOLS=1 -DWITHOUT_METRICS=1 -DBOOST_ROOT="C:\local\boost"
+        run: cmake -S . -B build -DTOOLS=1 -DWITHOUT_METRICS=1 -DBOOST_ROOT="C:\Boost" -DBOOST_LIBRARYDIR="C:\Boost\lib64-msvc-14.3"
       - name: Build Tools
         run: cmake --build build --config Release --target mapextractor --target mmaps_generator --target vmap4extractor --target vmap4assembler
-      - name: Upload Artifacts
-        uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v4
         with:
           name: tools-335
           path: build/bin/Release/mapextractor.exe
-          if-no-files-found: error
