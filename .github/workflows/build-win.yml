@@ -6,12 +6,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with: { ref: 3.3.5 }
-      - name: Install Boost
-        run: choco install boost-msvc-14.3 -y --no-progress
-      - name: Configure
-        run: cmake -S . -B build -DTOOLS=1 -DWITHOUT_METRICS=1
+      - name: Install Boost (vcpkg)
+        run: |
+          vcpkg install boost --triplet x64-windows
+          echo "CMAKE_PREFIX_PATH=C:\vcpkg\installed\x64-windows" >> 
       - name: Build
-        run: cmake --build build --config Release
+        run: cmake --workflow --fresh --preset ci 2>&1
       - uses: actions/upload-artifact@v4
         with:
           name: tools-335
