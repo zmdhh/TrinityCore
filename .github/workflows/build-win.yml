@@ -1,12 +1,7 @@
-name: Check Environment
+name: Check
 on: workflow_dispatch
 jobs:
-  check:
+  build:
     runs-on: windows-2022
     steps:
-      - run: |
-          echo "=== Check Boost ==="
-          dir C:\local\ 2>nul
-          dir "C:\Program Files\boost\" 2>nul
-          where cmake
-          cmake --version
+      - run: dir C:\
