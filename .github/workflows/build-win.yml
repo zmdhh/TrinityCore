@@ -2,17 +2,17 @@ name: Build Win Tools
 on: workflow_dispatch
 jobs:
   build:
-    runs-on: windows-latest
+    runs-on: windows-2022
     steps:
       - uses: actions/checkout@v5
         with:
           ref: 3.3.5
           submodules: true
-      - name: Install Boost
+      - name: Install Boost 1.83
         uses: MarkusJx/install-boost@v2
         id: install-boost
         with:
-          boost_version: 1.84.0
+          boost_version: 1.83.0
           link: static
           platform_version: 2022
           toolset: msvc
@@ -25,4 +25,4 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: tools-335
-          path: build/bin/Release/*.exe
+          path: build/**/*.exe
