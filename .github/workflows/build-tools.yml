@@ -5,10 +5,13 @@ jobs:
     runs-on: windows-2022
     steps:
       - uses: actions/checkout@v4
-        with: { ref: 3.3.5 }
-      - run: cmake -S . -B build -DTOOLS=1 -DWITHOUT_METRICS=1
-      - run: cmake --build build --config Release --target mapextractor --target mmaps_generator --target vmap4extractor --target vmap4assembler
+        with:
+          ref: 3.3.5
+      - name: Configure
+        run: cmake -S . -B build -DTOOLS=1 -DWITHOUT_METRICS=1
+      - name: Build Tools
+        run: cmake --build build --config Release --target mapextractor --target mmaps_generator --target vmap4extractor --target vmap4assembler
       - uses: actions/upload-artifact@v4
         with:
           name: tools-335
-          path: build/bin/Release/*.exe
+          path: build/bin/Release/mapextractor.exe
