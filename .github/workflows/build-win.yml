@@ -1,7 +1,28 @@
-name: Check
+name: Build Win Tools
 on: workflow_dispatch
 jobs:
   build:
-    runs-on: windows-2022
+    runs-on: windows-latest
     steps:
-      - run: dir C:\
+      - uses: actions/checkout@v5
+        with:
+          ref: 3.3.5
+          submodules: true
+      - name: Install Boost
+        uses: MarkusJx/install-boost@v2
+        id: install-boost
+        with:
+          boost_version: 1.84.0
+          link: static
+          platform_version: 2022
+          toolset: msvc
+      - name: Configure
+        env:
+          BOOST_ROOT: ${{ steps.install-boost.outputs.BOOST_ROOT }}
+        run: cmake -GNinja -S . -B build -DTOOLS=ON -DWITHOUT_METRICS=1
+      - name: Build Tools
+        run: cmake --build build --config Release --target mapextractor --target mmaps_generator --target vmap4extractor --target vmap4assembler
+      - uses: actions/upload-artifact@v4
+        with:
+          name: tools-335
+          path: build/bin/Release/*.exe
