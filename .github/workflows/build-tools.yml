@@ -19,6 +19,9 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: 3.3.5
+      - name: Install Boost
+        run: |
+          choco install boost -y
       - name: Configure
         run: cmake -S . -B build -DTOOLS=1 -DWITHOUT_METRICS=1
       - name: Build Tools
