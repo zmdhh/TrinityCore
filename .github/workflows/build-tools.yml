@@ -1,5 +1,17 @@
 name: Build Tools
-on: workflow_dispatch
+on:
+  workflow_dispatch:
+    inputs:
+      regenerate_maps:
+        description: 'Regenerate mmaps (需要 .map 文件)'
+        required: false
+        default: 'false'
+  push:
+    branches:
+      - 3.3.5
+    paths:
+      - 'src/tools/mmaps_generator/**'
+      - 'cmake/**'
 jobs:
   build:
     runs-on: windows-2022
@@ -11,7 +23,14 @@ jobs:
         run: cmake -S . -B build -DTOOLS=1 -DWITHOUT_METRICS=1
       - name: Build Tools
         run: cmake --build build --config Release --target mapextractor --target mmaps_generator --target vmap4extractor --target vmap4assembler
+      - name: List build artifacts
+        run: dir build\bin\Release\*.exe
       - uses: actions/upload-artifact@v4
         with:
           name: tools-335
-          path: build/bin/Release/mapextractor.exe
+          path: |
+            build/bin/Release/mapextractor.exe
+            build/bin/Release/mmaps_generator.exe
+            build/bin/Release/vmap4extractor.exe
+            build/bin/Release/vmap4assembler.exe
+            build/bin/Release/*.dll
